@@ -1,0 +1,8 @@
+Copy Location Set To: C:\Users\Frankie\\Documents\\Scripts\\destination\\
+Not copying current path, it's probably a comment
+Not copying current path, it's probably a comment
+Successfully copied file C:\Users\Frankie\Documents\Scripts\debug.txt
+Not copying current path, it's probably a comment
+Successfully copied path C:\Users\Frankie\Documents\Scripts\test1
+Successfully copied path C:\Users\Frankie\Documents\Scripts\test2
+Successfully copied path C:\ProgramData\Nvidia

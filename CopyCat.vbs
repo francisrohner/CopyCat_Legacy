@@ -1,4 +1,6 @@
-'TODO Resolve %USERPROFILE%???
+'Author: Francis Rohner @ http://francisrohner.me
+'Email me about any bugs/suggestions francis.rohner@outlook.com
+'Please attach CopyCatLog.txt when submitting bugs.
 
 'Grab Current Directory before elevation
 Dim WshShell, strCurDir
@@ -26,8 +28,12 @@ set filesys=CreateObject("Scripting.FileSystemObject")
 
 'Initializations
 currentLine = configFileReader.ReadLine()
-copyLocation = Replace(Trim(Mid(currentLine, InStr(currentLine, "=") + 1)), "\", "\\")
-copyLocation = resolvePaths(copyLocation)
+if InStr(currentLine, "here") or InStr(currentLine, "Here") Then
+    copyLocation = strCurDir
+else
+    copyLocation = Replace(Trim(Mid(currentLine, InStr(currentLine, "=") + 1)), "\", "\\")
+    copyLocation = resolvePaths(copyLocation)
+end if
 logWriter.WriteLine("Copy Location Set To: " & copyLocation)
 
 Redim paths(numPaths)
@@ -68,6 +74,6 @@ environmentVariables = Array("%USERPROFILE%", "%SYSTEMROOT%", "%SYSTEMDRIVE%", "
 'Replace case in-sensitive
 for i = 0 to UBound(environmentVariables)
     value = Replace(value, environmentVariables(i), oShell.ExpandEnvironmentStrings(environmentVariables(i)), 1, -1, vbTextCompare)
-next
+    next
 resolvePaths = value
 end function
