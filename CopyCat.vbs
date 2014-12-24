@@ -25,8 +25,6 @@ Set configFileReader = CreateObject("Scripting.FileSystemObject").OpenTextFile(s
 set filesys=CreateObject("Scripting.FileSystemObject")
 
 'Initializations
-numLines = 0
-
 currentLine = configFileReader.ReadLine()
 copyLocation = Replace(Trim(Mid(currentLine, InStr(currentLine, "=") + 1)), "\", "\\")
 copyLocation = resolvePaths(copyLocation)
@@ -39,7 +37,6 @@ do while not configFileReader.AtEndOfStream
 
 	currentLine = configFileReader.ReadLine()
 	currentLine = Trim(Mid(currentLine, InStr(currentLine, "=") + 1))
-	'currentLine = Replace(currentLine, "\", "\\")
     currentLine = resolvePaths(currentLine)
 
 	if InStr(currentLine, "#") Then
@@ -65,20 +62,12 @@ Set logWriter = Nothing
 MsgBox("Meow, everything copied")
 
 function resolvePaths(value)
+
 Set oShell = CreateObject("Wscript.Shell")
-strUserProfile = oShell.ExpandEnvironmentStrings("%USERPROFILE%")
-strWinDir = oShell.ExpandEnvironmentStrings("%SYSTEMROOT%")
-strSysDrive = oShell.ExpandEnvironmentStrings("%SYSTEMDRIVE%")
-strProgramFiles = oShell.ExpandEnvironmentStrings("%PROGRAMFILES%")
-strProgramFiles86 = oShell.ExpandEnvironmentStrings("%PROGRAMFILES(x86)%")
-strProgramData = oShell.ExpandEnvironmentStrings("%PROGRAMDATA%")
-
+environmentVariables = Array("%USERPROFILE%", "%SYSTEMROOT%", "%SYSTEMDRIVE%", "%PROGRAMFILES%", "%PROGRAMFILES(x86)%", "%PROGRAMDATA%", "%APPDATA%")
 'Replace case in-sensitive
-value = Replace(value, "%USERPROFILE%", strUserProfile, 1, -1, vbTextCompare)
-value = Replace(value, "%SYSTEMDRIVE%", strSysDrive, 1, -1, vbTextCompare)
-value = Replace(value, "%PROGRAMFILES%", strProgramFiles, 1, -1, vbTextCompare)
-value = Replace(value, "%PROGRAMFILES(x86)%", strProgramFiles86, 1, -1, vbTextCompare)
-value = Replace(value, "%PROGRAMDATA%", strProgramData, 1, -1, vbTextCompare)
-resolvePaths = Replace(value, "%SYSTEMROOT%", strWinDir, 1, -1, vbTextCompare)
-
+for i = 0 to UBound(environmentVariables)
+    value = Replace(value, environmentVariables(i), oShell.ExpandEnvironmentStrings(environmentVariables(i)), 1, -1, vbTextCompare)
+next
+resolvePaths = value
 end function
