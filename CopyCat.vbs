@@ -1,4 +1,4 @@
-'Author: Francis Rohner @ http://francisrohner.me
+'Author: Francis Rohner @ http://francisrohner.com
 'Email me about any bugs/suggestions francis.rohner@outlook.com
 'Please attach CopyCatLog.txt when submitting bugs.
 
@@ -22,58 +22,76 @@ End If
 Dim copyLocation
 Dim currentLine
 Dim currentPath
+Dim isComment
 Set logWriter = CreateObject("Scripting.FileSystemObject").OpenTextFile(strCurDir & "\\CopyCatLog.txt",2,true)
 Set configFileReader = CreateObject("Scripting.FileSystemObject").OpenTextFile(strCurDir & "\\CopyCat.cfg",1)
 set filesys=CreateObject("Scripting.FileSystemObject")
 
 'Initializations
 currentLine = configFileReader.ReadLine()
-if InStr(currentLine, "here") or InStr(currentLine, "Here") Then
+If InStr(currentLine, "here") or InStr(currentLine, "Here") Then
     copyLocation = strCurDir
-else
+Else
     copyLocation = Replace(Trim(Mid(currentLine, InStr(currentLine, "=") + 1)), "\", "\\")
     copyLocation = resolvePaths(copyLocation)
-end if
+End if
 logWriter.WriteLine("Copy Location Set To: " & copyLocation)
 
 Redim paths(numPaths)
 Redim files(numFiles)
 
-do while not configFileReader.AtEndOfStream
+Do While Not configFileReader.AtEndOfStream
 
 	currentLine = configFileReader.ReadLine()
-	currentLine = Trim(Mid(currentLine, InStr(currentLine, "=") + 1))
-    currentLine = resolvePaths(currentLine)
-
-	if InStr(currentLine, "#") Then
+	currentLine = resolveConfigLine(currentLine)
+	
+	If InStr(currentLine, "#") Then
 		logWriter.WriteLine("Not copying current path, it's probably a comment")
-	elseIf filesys.FolderExists(currentLine) Then
-		filesys.CopyFolder currentLine, copyLocation
-		logWriter.WriteLine("Successfully copied path " & currentLine)
-	elseif filesys.FileExists(currentLine) Then
-		filesys.CopyFile currentLine, copyLocation, true
+	Elseif filesys.FileExists(currentLine) Then
+		filesys.CopyFile currentLine, copyLocation & "\", True
 		logWriter.WriteLine("Successfully copied file " & currentLine)
+	ElseIf filesys.FolderExists(currentLine) Then
+		'filesys.CreateFolder copyLocation & "\" & getEndPath(currentLine)
+		'filesys.CopyFolder currentLine & "*", copyLocation, True
+		Dim xcopyCommand
+		xcopyCommand = "xcopy.exe " & """" & currentLine & "\*""" & " " & """" & copyLocation & "\" & getEndPath(currentLine) & "\"" /s /i /Y"
+		logWriter.WriteLine(xcopyCommand)
+		WshShell.Run xcopyCommand
+		logWriter.WriteLine("Successfully copied path " & currentLine)
 	Else
 		logWriter.WriteLine("Failed copying " & currentLine & " path doesn't exist")
 	End If
 
-loop
+Loop
 
 'Disposal
 configFileReader.Close
 Set configFileReader = Nothing
 logWriter.Close
 Set logWriter = Nothing
+Set filesys = Nothing
 
 MsgBox("Meow, everything copied")
 
-function resolvePaths(value)
+Function resolveConfigLine(value)
+	If InStr(value, "#") = 0 Then
+		resolveConfigLine = Trim(Mid(value, InStr(value, "=") + 1))
+		resolveConfigLine = resolvePaths(resolveConfigLine)
+	Else
+		resolveConfigLine = "#"
+	End If
+End Function
 
-Set oShell = CreateObject("Wscript.Shell")
-environmentVariables = Array("%USERPROFILE%", "%SYSTEMROOT%", "%SYSTEMDRIVE%", "%PROGRAMFILES%", "%PROGRAMFILES(x86)%", "%PROGRAMDATA%", "%APPDATA%")
-'Replace case in-sensitive
-for i = 0 to UBound(environmentVariables)
-    value = Replace(value, environmentVariables(i), oShell.ExpandEnvironmentStrings(environmentVariables(i)), 1, -1, vbTextCompare)
-    next
-resolvePaths = value
-end function
+Function resolvePaths(value)
+	Set oShell = CreateObject("Wscript.Shell")
+	environmentVariables = Array("%USERPROFILE%", "%SYSTEMROOT%", "%SYSTEMDRIVE%", "%PROGRAMFILES%", "%PROGRAMFILES(x86)%", "%PROGRAMDATA%", "%APPDATA%")
+	'Replace case in-sensitive
+	For i = 0 to UBound(environmentVariables)
+		value = Replace(value, environmentVariables(i), oShell.ExpandEnvironmentStrings(environmentVariables(i)), 1, -1, vbTextCompare)
+	Next
+	resolvePaths = value
+End Function
+
+Function getEndPath(value)
+	getEndPath = Trim(Mid(value, InStrRev(value, "\") + 1))
+End Function

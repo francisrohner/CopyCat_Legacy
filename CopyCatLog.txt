@@ -1,8 +1,12 @@
-Copy Location Set To: C:\Users\Frankie\\Documents\\Scripts\\destination\\
+Copy Location Set To: C:\cygwin64\home\Frankie\CopyCat
 Not copying current path, it's probably a comment
+Successfully copied file C:\Windows\notepad.exe
 Not copying current path, it's probably a comment
-Successfully copied file C:\Users\Frankie\Documents\Scripts\debug.txt
-Not copying current path, it's probably a comment
-Successfully copied path C:\Users\Frankie\Documents\Scripts\test1
-Successfully copied path C:\Users\Frankie\Documents\Scripts\test2
-Successfully copied path C:\ProgramData\Nvidia
+xcopy.exe "C:\Users\Frankie\AppData\Local\Google\Chrome\User Data\*" "C:\cygwin64\home\Frankie\CopyCat\User Data\" /s /i /Y
+Successfully copied path C:\Users\Frankie\AppData\Local\Google\Chrome\User Data
+xcopy.exe "D:\Config\*" "C:\cygwin64\home\Frankie\CopyCat\Config\" /s /i /Y
+Successfully copied path D:\Config
+xcopy.exe "C:\Users\Frankie\AppData\Roaming\.minecraft\*" "C:\cygwin64\home\Frankie\CopyCat\.minecraft\" /s /i /Y
+Successfully copied path C:\Users\Frankie\AppData\Roaming\.minecraft
+xcopy.exe "C:\Program Files (x86)\TeamViewer\*" "C:\cygwin64\home\Frankie\CopyCat\TeamViewer\" /s /i /Y
+Successfully copied path C:\Program Files (x86)\TeamViewer
