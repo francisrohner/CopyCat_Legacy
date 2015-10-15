@@ -5,15 +5,18 @@
 'Grab Current Directory before elevation
 Dim WshShell, strCurDir
 Set WshShell = CreateObject("WScript.Shell")
+'MsgBox("Running Stuff")
 strCurDir = WshShell.CurrentDirectory
 
 'Run as Admin
 If Not WScript.Arguments.Named.Exists("elevate") Then
+	MsgBox(Wscript.FullName)
+	MsgBox(WScript.ScriptFullName)
+	'MsgBox(strCurDir)
   CreateObject("Shell.Application").ShellExecute WScript.FullName _
-    , WScript.ScriptFullName & " /elevate /currentDirectory " & strCurDir, "", "runas", 1
+    ,"""" & WScript.ScriptFullName & """ /elevate /currentDirectory """ & strCurDir & """", "", "runas", 1
   WScript.Quit
 End If
-
 If WScript.Arguments.Named.Exists("currentDirectory")  Then
 	strCurDir = Trim(WScript.Arguments(2))
 End If
@@ -23,9 +26,10 @@ Dim copyLocation
 Dim currentLine
 Dim currentPath
 Dim isComment
-Set logWriter = CreateObject("Scripting.FileSystemObject").OpenTextFile(strCurDir & "\\CopyCatLog.txt",2,true)
-Set configFileReader = CreateObject("Scripting.FileSystemObject").OpenTextFile(strCurDir & "\\CopyCat.cfg",1)
-set filesys=CreateObject("Scripting.FileSystemObject")
+Set filesys = CreateObject("Scripting.FileSystemObject")
+Set logWriter = filesys.OpenTextFile(strCurDir & "\\CopyCatLog.txt",2,true)
+Set configFileReader = filesys.OpenTextFile(strCurDir & "\\CopyCat.cfg",1)
+
 
 'Initializations
 currentLine = configFileReader.ReadLine()
@@ -51,8 +55,6 @@ Do While Not configFileReader.AtEndOfStream
 		filesys.CopyFile currentLine, copyLocation & "\", True
 		logWriter.WriteLine("Successfully copied file " & currentLine)
 	ElseIf filesys.FolderExists(currentLine) Then
-		'filesys.CreateFolder copyLocation & "\" & getEndPath(currentLine)
-		'filesys.CopyFolder currentLine & "*", copyLocation, True
 		Dim xcopyCommand
 		xcopyCommand = "xcopy.exe " & """" & currentLine & "\*""" & " " & """" & copyLocation & "\" & getEndPath(currentLine) & "\"" /s /i /Y"
 		logWriter.WriteLine(xcopyCommand)
@@ -94,4 +96,8 @@ End Function
 
 Function getEndPath(value)
 	getEndPath = Trim(Mid(value, InStrRev(value, "\") + 1))
+End Function
+
+Function quote(value)
+	quote = """" & """"
 End Function
