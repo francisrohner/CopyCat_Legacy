@@ -73,7 +73,7 @@ logWriter.Close
 Set logWriter = Nothing
 Set filesys = Nothing
 
-MsgBox("Meow, everything copied")
+'MsgBox("Meow, everything copied")
 
 Function resolveConfigLine(value)
 	If InStr(value, "#") = 0 Then
