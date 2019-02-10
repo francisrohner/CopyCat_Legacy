@@ -1,6 +1,4 @@
 'Author: Francis Rohner @ http://francisrohner.com
-'Email me about any bugs/suggestions francis.rohner@outlook.com
-'Please attach CopyCatLog.txt when submitting bugs.
 
 'Grab Current Directory before elevation
 Dim WshShell, strCurDir
