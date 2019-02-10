@@ -3,7 +3,6 @@
 'Grab Current Directory before elevation
 Dim WshShell, strCurDir
 Set WshShell = CreateObject("WScript.Shell")
-'MsgBox("Running Stuff")
 strCurDir = WshShell.CurrentDirectory
 
 'Run as Admin
@@ -27,7 +26,6 @@ Dim isComment
 Set filesys = CreateObject("Scripting.FileSystemObject")
 Set logWriter = filesys.OpenTextFile(strCurDir & "\\CopyCatLog.txt",2,true)
 Set configFileReader = filesys.OpenTextFile(strCurDir & "\\CopyCat.cfg",1)
-
 
 'Initializations
 currentLine = configFileReader.ReadLine()
@@ -54,7 +52,7 @@ Do While Not configFileReader.AtEndOfStream
 		logWriter.WriteLine("Successfully copied file " & currentLine)
 	ElseIf filesys.FolderExists(currentLine) Then
 		Dim xcopyCommand
-		xcopyCommand = "xcopy.exe " & """" & currentLine & "\*""" & " " & """" & copyLocation & "\" & getEndPath(currentLine) & "\"" /s /i /Y"
+		xcopyCommand = "xcopy.exe " & """" & currentLine & "\*""" & " " & """" & copyLocation & "\" & getEndPath(currentLine) & "\"" /b /s /i /Y"
 		logWriter.WriteLine(xcopyCommand)
 		WshShell.Run xcopyCommand
 		logWriter.WriteLine("Successfully copied path " & currentLine)
