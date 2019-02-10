@@ -7,8 +7,8 @@ strCurDir = WshShell.CurrentDirectory
 
 'Run as Admin
 If Not WScript.Arguments.Named.Exists("elevate") Then
-	MsgBox(Wscript.FullName)
-	MsgBox(WScript.ScriptFullName)
+	'MsgBox(Wscript.FullName)
+	'MsgBox(WScript.ScriptFullName)
 	'MsgBox(strCurDir)
   CreateObject("Shell.Application").ShellExecute WScript.FullName _
     ,"""" & WScript.ScriptFullName & """ /elevate /currentDirectory """ & strCurDir & """", "", "runas", 1
